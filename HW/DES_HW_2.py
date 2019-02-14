@@ -172,6 +172,7 @@ def combine(inBlock_length, outBlock_length, leftBlock, rightBlock, outBlock):
      
      ### BEGIN - TODO (insert code here)
 
+
      outBlock[:] = (leftBlock) or (rightBlock)
 
      # You can use extend method
@@ -192,7 +193,6 @@ def copy(block_length, inBlock, outBlock):
      ### BEGIN - TODO (insert code from here)
 
      outBlock[:] = inBlock[:]
-     outBlock = (inBlock) // (block_length)
 
      ### END - TODO
      
@@ -292,11 +292,6 @@ def mixer(leftBlock, rightBlock, RoundKey):
      T3 = []
      
      ### BEGIN - TODO (insert code here)
-
-     T1[:] = leftBlock[:]
-     T3[:] = rightBlock[:]
-
-
 
 
      ### END - TODO
@@ -405,13 +400,36 @@ def Key_Generator(keyWithParities, RoundKeys, ShiftTable):
      ### BEGIN - TODO (insert code here)
 
      cipherKey = ParityDropTable
+     preRoundKey = KeyCompressionTable
 
-     assert(len(cipherKey)==56)
-     
+     assert(len(cipherKey) == 56)
+
      leftKey[:] = cipherKey[:28]
      rightKey[:] = cipherKey[28:]
 
-     preRoundKey[:] = KeyCompressionTable[:]
+     i=0
+     while i<28:
+
+          if i == 1:
+               leftKey[1] = leftKey[2]
+               rightKey[1] = rightKey[2]
+
+          elif i==2:
+               leftKey[2] = leftKey[3]
+               rightKey[2] = rightKey[3]
+
+          elif i==9:
+               leftKey[9] = leftKey[10]
+               rightKey[9] = rightKey[10]
+
+          elif i==16:
+               leftKey[16] = leftKey[17]
+               rightKey[16] = rightKey[17]
+
+          else:
+               leftKey[i] = leftKey[i+2]
+               rightKey[i] = rightKey[i+2]
+  
      
      ### END - TODO          
           
@@ -529,20 +547,22 @@ def main():
      key = HexStringToBinaryArray("AABB09182736CCDD")
 
      Key_Generator(key, RoundKeys, ShiftTable)
-"""
+
      ciphertext = []
      Cipher(plaintext, RoundKeys, ciphertext)
-     
+   
      print ("\n\nDecryption")
      restored = []
      reverse_RoundKeys = []
      reverse_RoundKeys[:] = RoundKeys[:]
      reverse_RoundKeys.reverse()
+
      Cipher(ciphertext, reverse_RoundKeys, restored)
      print ("-" * 60 + "\nResult")
      print ("plaintext:\t\t%s\nciphertext:\t\t%s\ndecrypted plaintext:\t%s" % \
             (BinaryArrayToHexString(plaintext, 16), \
             BinaryArrayToHexString(ciphertext, 16), \
             BinaryArrayToHexString(restored, 16)) )
-"""
+
 main() # invocation of main function
+
